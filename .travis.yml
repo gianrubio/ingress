@@ -30,4 +30,4 @@ before_script:
 
 script:  
   - make fmt lint vet cover
-  #- make test-e2e
+  - make test-e2e
