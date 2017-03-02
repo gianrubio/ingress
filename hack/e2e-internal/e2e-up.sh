@@ -7,6 +7,15 @@ set -eof pipefail
 # include env
 . hack/e2e-internal/e2e-env.sh
 
+DOCKER_PATH="/var/lib/docker"
+KUBELET_PATH="/var/lib/kubelet"
+
+if [[ $(uname) == "Darwin" ]] ;
+then
+    DOCKER_PATH=${HOME}"/Library/Group\ Containers/group.com.docker/bin/docker"
+    KUBELET_PATH=/private/var/lib/kubelet
+fi
+
 echo "Starting etcd..."
 docker run -d \
     --net=host \
@@ -30,8 +39,8 @@ docker run -d --name=kubelet \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
     --volume=/dev:/dev \
-    --volume=/var/lib/docker/:/var/lib/docker:rw \
-    --volume=/var/lib/kubelet/:/var/lib/kubelet:rw \
+    --volume="${DOCKER_PATH}":/var/lib/docker:rw \
+    --volume=${KUBELET_PATH}:/var/lib/kubelet:rw \
     --volume=/var/run:/var/run:rw \
     --net=host \
     --pid=host \
